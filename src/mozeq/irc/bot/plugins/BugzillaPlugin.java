@@ -24,11 +24,11 @@ public class BugzillaPlugin extends IrcBotPlugin {
 		commands.add(".rhbz#");
 
 		Configuration conf = ConfigLoader.getConfiguration("bzplugin.conf");
-		USERNAME = conf.get("username");
-		PASSWORD = conf.get("password");
-		BZ_URL = conf.get("bz_url");
-
-
+		if (conf != null) {
+			USERNAME = conf.get("username");
+			PASSWORD = conf.get("password");
+			BZ_URL = conf.get("bz_url");
+		}
 	}
 
 	@Override
