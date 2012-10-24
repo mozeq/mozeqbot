@@ -57,7 +57,7 @@ public class BugzillaPlugin extends IrcBotPlugin {
 
 		if (bzTicket != null) {
 			String ticketURL = bz.getURL() + "/show_bug.cgi?id=" + bzTicket.getID();
-			addResponse("["+ bzTicket.getComponent() +"] " + bzTicket.getSummary() + " <"+ ticketURL +">");
+			addResponse("bz#" + bzTicket.getID() + ": ["+ bzTicket.getComponent() +"] " + bzTicket.getSummary() + " <"+ ticketURL +">");
 		}
 
 		return responses;
