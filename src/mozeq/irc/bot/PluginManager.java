@@ -71,8 +71,16 @@ public class PluginManager {
 				IrcBotPlugin plugin = null;
 				try {
 					plugin = (IrcBotPlugin) cls.getConstructor().newInstance();
-				} catch (IllegalArgumentException | InvocationTargetException
-						| NoSuchMethodException | SecurityException e) {
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
