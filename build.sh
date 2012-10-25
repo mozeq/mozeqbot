@@ -1,6 +1,7 @@
 #! /bin/sh
 
-git submodule foreach git pull
+git submodule init
+git submodule update
 # make jTrac
 pushd `pwd`
 cd jars/jTrac/
