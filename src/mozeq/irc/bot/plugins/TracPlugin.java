@@ -52,9 +52,18 @@ public class TracPlugin extends IrcBotPlugin {
 			e.printStackTrace();
 		}
 
+		int ticketID = 0;
+		try {
+			ticketID = parseNumberFromMsg(params[1]);
+		} catch (NumberFormatException e) {
+			//write this message to the irc?
+			System.err.println("Can't parse number from: " + params[1]);
+			//there is no reason to continue, so return..
+		}
+
 		Ticket t = null;
 		try {
-			t = trac.getTicket(Integer.parseInt(params[1]));
+			t = trac.getTicket(ticketID);
 		} catch (XmlRpcException e) {
 			// TODO Auto-generated catch block
 			System.err.println(e.getMessage());

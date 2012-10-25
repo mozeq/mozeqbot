@@ -33,4 +33,20 @@ public abstract class IrcBotPlugin {
 		return true;
 	}
 
+	public int parseNumberFromMsg(String strToParse) throws NumberFormatException {
+		int intEnd = 0;
+
+		while (intEnd < strToParse.length() && Character.isDigit(strToParse.charAt(intEnd)))
+			intEnd++;
+
+		String strNum = strToParse.substring(0, intEnd);
+		int ticketID = 0;
+
+		System.out.println(">>>" + strNum);
+
+		ticketID = Integer.parseInt(strNum);
+
+		return ticketID;
+	}
+
 }

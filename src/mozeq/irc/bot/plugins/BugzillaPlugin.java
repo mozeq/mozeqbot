@@ -47,9 +47,19 @@ public class BugzillaPlugin extends IrcBotPlugin {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+
+		int ticketID = 0;
+		try {
+			ticketID = parseNumberFromMsg(params[1]);
+		} catch (NumberFormatException e) {
+			//write this message to the irc?
+			System.err.println("Can't parse number from: " + params[1]);
+			//there is no reason to continue, so return..
+		}
+
 		BugzillaTicket bzTicket = null;
 		try {
-			bzTicket = bz.getTicket(Integer.parseInt(params[1]));
+			bzTicket = bz.getTicket(ticketID);
 		} catch (XmlRpcException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
