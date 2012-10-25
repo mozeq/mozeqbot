@@ -1,0 +1,6 @@
+[submodule "jars/jBugzilla"]
+	path = jars/jBugzilla
+	url = git://github.com/mozeq/jBugzilla.git
+[submodule "jars/jTrac"]
+	path = jars/jTrac
+	url = git://github.com/mozeq/jTrac.git
