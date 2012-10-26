@@ -42,8 +42,6 @@ public abstract class IrcBotPlugin {
 		String strNum = strToParse.substring(0, intEnd);
 		int ticketID = 0;
 
-		System.out.println(">>>" + strNum);
-
 		ticketID = Integer.parseInt(strNum);
 
 		return ticketID;
