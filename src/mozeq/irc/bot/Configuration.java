@@ -22,12 +22,16 @@ public class Configuration {
 
 	public int getInt(String option) {
 		String optVal = get(option);
+		//we could live without this variable, but eclipse tend to complain about getInt not returning and then about not reachable code?? wtf?
+		int retval;
 		try {
-			return Integer.parseInt(optVal);
+			retval = Integer.parseInt(optVal);
 		} catch (NumberFormatException ex){
 			System.err.println("'" + optVal + "' is not a valid number, using 0 as default");
-			return 0;
+			retval = 0;
 		}
+
+		return retval;
 	}
 
 	public boolean getBool(String option) {
