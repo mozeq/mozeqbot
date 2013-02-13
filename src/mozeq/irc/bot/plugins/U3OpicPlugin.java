@@ -26,34 +26,75 @@ public class U3OpicPlugin extends IrcBotPlugin {
 
 	}
 
+
+	/*
+	 * (non-Javadoc)
+	 * @see mozeq.irc.bot.IrcBotPlugin#run(mozeq.irc.bot.IrcMessage, java.lang.String)
+	 * <div id="menu">
+						<h3>Dnešní menu 26. 10. 2012</h3>
+
+			<p>Polévka:
+
+				<span>
+
+				Pórková polévka s vejcem
+				</span>
+
+			</p>
+
+			<p class="dots">...........................................................................................................................................................................</p>
+
+			<p>menu č.1:
+
+				<span>
+
+				Čevapčiči z mletého hovězího masa s cibulí a hořčicí, vařené brambory
+				</span>
+
+				<span class="cena">
+
+					75,-
+
+				</span>
+
+			</p>
+
+			<p class="dots">...........................................................................................................................................................................</p>
+
+	 */
+
 	@Override
 	public ArrayList<String> run(IrcMessage message, String command) {
 		clearResponses();
 		try {
-            Document doc = Jsoup.connect("http://u3opic.cz/").get();
+			Document doc = Jsoup.connect("http://u3opic.cz/").get();
 
-            Elements menus = doc.select("div[id=menuAll]");
-            int day = 0;
-            for (Element lunchmenu : menus) {
-            	System.out.println("Day: " + days[day]);
-                Elements lines = lunchmenu.getAllElements();
-                for (Element line: lines) {
+			Elements menuElemenents = doc.select("div[id=menu]").get(0).getAllElements();
+			for (Element line: menuElemenents) {
 
-                	if(line.attr("class").equals("dots"))
-                		continue;
-                	if(line.attr("class").equals("cena"))
-                		continue;
-                	if(line.nodeName().equals("p"))
-                		continue;
+				if (line.tagName().equals("div") && line.attr("id").equals("menuAll"))
+					break;
 
-                    System.out.println(line.text());
-                }
-                day++;
-            }
-        }
-        catch (Exception e) {
-        	System.out.println(e);
-        }
+				//System.out.println(line.tagName());
+				if(line.attr("class").equals("dots"))
+					continue;
+				if(line.attr("class").equals("cena"))
+					continue;
+				if(line.nodeName().equals("p")) {
+					Elements els = line.getElementsByTag("span");
+					String resp = "";
+					for (Element e: els) {
+						resp += " " + e.text();
+					}
+					if (resp.length() > 0)
+						addResponse(resp.trim());
+				}
+
+			}
+		}
+		catch (Exception e) {
+			System.out.println(e);
+		}
 		return responses;
 
 	}
