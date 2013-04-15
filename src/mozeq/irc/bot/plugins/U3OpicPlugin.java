@@ -95,8 +95,10 @@ public class U3OpicPlugin extends IrcBotPlugin {
 		catch (Exception e) {
 			System.out.println(e);
 		}
+
+		if (responses.isEmpty())
+			addResponse("Sorry, can't find menu for today");
+
 		return responses;
-
 	}
-
 }
