@@ -108,7 +108,7 @@ public class PluginManager {
 
 		for(String command: pluginTable.getCommands()) {
 
-			if (message.body.contains(command)) {
+			if (message.body.matches("(^|\\s)"+command+"(\\s|$)")) {
 				for (IrcBotPlugin plugin : pluginTable.getActions(command)) {
 					ArrayList<String> res = plugin.run(message, command);
 
@@ -123,4 +123,14 @@ public class PluginManager {
 		}
 		return retval;
 	}
+
+	public static void main (String[] args) {
+		String regexString = "(^|\\s)paladeo(\\s|$)";
+		System.out.println(" paladeo ".matches(regexString));
+		System.out.println("paladeo".matches(regexString));
+		System.out.println("paladeo ".matches(regexString));
+		System.out.println(" paladeo".matches(regexString));
+		System.out.println("dopice".matches(regexString));
+	}
 }
+
