@@ -20,8 +20,8 @@ public class KudosPlugin extends IrcBotPlugin {
 	public void init() {
 		this.commands = new ArrayList<String>();
 		commands.add("kudos");
-		commands.add("++");
-		commands.add("--");
+		commands.add("\\+\\+");
+		commands.add("\\-\\-");
 
 		loadKudos();
 	}

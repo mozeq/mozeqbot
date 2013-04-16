@@ -3,6 +3,8 @@ import java.io.File;
 import java.io.FileFilter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A class that implements the Java FileFilter interface.
@@ -106,11 +108,12 @@ public class PluginManager {
 
 		ArrayList<String> retval = new ArrayList<String>();
 
-		for(String command: pluginTable.getCommands()) {
+		for(Pattern command: pluginTable.getCommands()) {
+			Matcher matcher = command.matcher(message.body);
 
-			if (message.body.matches("(^|\\s)"+command+"(\\s|$)")) {
+			while (matcher.find()) {
 				for (IrcBotPlugin plugin : pluginTable.getActions(command)) {
-					ArrayList<String> res = plugin.run(message, command);
+					ArrayList<String> res = plugin.run(message, matcher.group());
 
 					if(res == null)
 						continue;
@@ -124,13 +127,5 @@ public class PluginManager {
 		return retval;
 	}
 
-	public static void main (String[] args) {
-		String regexString = "(^|\\s)paladeo(\\s|$)";
-		System.out.println(" paladeo ".matches(regexString));
-		System.out.println("paladeo".matches(regexString));
-		System.out.println("paladeo ".matches(regexString));
-		System.out.println(" paladeo".matches(regexString));
-		System.out.println("dopice".matches(regexString));
-	}
 }
 

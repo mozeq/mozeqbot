@@ -12,7 +12,7 @@ import org.jsoup.select.Elements;
 
 public class U3OpicPlugin extends IrcBotPlugin {
 
-	String[] supportedCommands = {"opice", "u3opic"};
+	String[] supportedCommands = {"(^|\\s)opice(\\s|$)", "(^|\\s)u3opic(\\s|$)"};
 	String[] days = {"pondeli", "utery", "streda", "ctvrtek", "patek"};
 
 	@Override

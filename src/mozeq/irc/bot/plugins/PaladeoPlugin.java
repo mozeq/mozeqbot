@@ -14,7 +14,7 @@ import org.jsoup.select.Elements;
 
 public class PaladeoPlugin extends IrcBotPlugin {
 
-	String[] supportedCommands = {"paladeo"};
+	String[] supportedCommands = {"(^|\\s)paladeo(\\s|$)"};
 	String[] days = {"pondeli", "utery", "streda", "ctvrtek", "patek"};
 
 	@Override
@@ -66,6 +66,15 @@ public class PaladeoPlugin extends IrcBotPlugin {
         }
 
 		return responses;
+	}
+
+	public static void main (String[] args) {
+		String regexString = "(^|\\s)paladeo(\\s|$)";
+		System.out.println(" paladeo ".matches(regexString));
+		System.out.println("paladeo".matches(regexString));
+		System.out.println("paladeo ".matches(regexString));
+		System.out.println(" paladeo".matches(regexString));
+		System.out.println("dopice".matches(regexString));
 	}
 
 }

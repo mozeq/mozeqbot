@@ -21,7 +21,7 @@ public class BugzillaPlugin extends IrcBotPlugin {
 	public void init() {
 		this.commands = new ArrayList<String>();
 
-		commands.add(".rhbz#");
+		commands.add(".rhbz#\\d+");
 
 		Configuration conf = ConfigLoader.getConfiguration("bzplugin.conf");
 		if (conf != null) {

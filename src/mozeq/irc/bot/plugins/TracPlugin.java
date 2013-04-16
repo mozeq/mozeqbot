@@ -23,7 +23,7 @@ public class TracPlugin extends IrcBotPlugin {
 	public void init() {
 		this.commands = new ArrayList<String>();
 
-		commands.add(".trac#");
+		commands.add(".trac#\\d+");
 
 		Configuration conf = ConfigLoader.getConfiguration("tracplugin.conf");
 		USERNAME = conf.get("username");

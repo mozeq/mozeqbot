@@ -3,12 +3,13 @@ package mozeq.irc.bot;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class PluginTable {
-	private Hashtable<String, List<IrcBotPlugin>> pluginsTable;
+	private Hashtable<Pattern, List<IrcBotPlugin>> pluginsTable;
 
 	PluginTable() {
-		pluginsTable = new Hashtable<String, List<IrcBotPlugin>>();
+		pluginsTable = new Hashtable<Pattern, List<IrcBotPlugin>>();
 	}
 
 	public void registerPlugin(IrcBotPlugin plugin) {
@@ -22,22 +23,22 @@ public class PluginTable {
 
 			plugins.add(plugin);
 
-			this.pluginsTable.put(s, plugins);
+			this.pluginsTable.put(Pattern.compile(s), plugins);
 		}
 
 	}
 
-	public List<String> getCommands() {
-		ArrayList<String> commands = new ArrayList<String>();
+	public List<Pattern> getCommands() {
+		ArrayList<Pattern> commands = new ArrayList<Pattern>();
 
-		for(String s : pluginsTable.keySet()) {
-			commands.add(s);
+		for(Pattern p : pluginsTable.keySet()) {
+			commands.add(p);
 		}
 
 		return commands;
 	}
 
-	public List<IrcBotPlugin> getActions(String command) {
+	public List<IrcBotPlugin> getActions(Pattern command) {
 		List<IrcBotPlugin> actionList = pluginsTable.get(command);
 		return actionList;
 	}
