@@ -26,8 +26,9 @@ public class IrcBot {
 		int port = conf.getInt("port");
 		String channel = conf.get("channel");
 		boolean authenticate = conf.getBool("authenticate");
+		int timeout = conf.getInt("reconnect_after");
 
-		IrcConnection irc = new IrcConnection(hostname, port, channel, pm, authenticate);
+		IrcConnection irc = new IrcConnection(hostname, port, channel, pm, authenticate, timeout);
 
 		pm.loadPlugins();
 

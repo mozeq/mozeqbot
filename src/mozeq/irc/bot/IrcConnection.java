@@ -24,7 +24,8 @@ public class IrcConnection implements Runnable {
 	boolean auth = false;
 	Timer reconnectTimer = null;
     /* how many milliseconds to wait before trying to reconnect;
-     * freenode waits cca 5 minutes, so we set it to 10minutes
+     * freenode waits cca 5 minutes, so we set it to 10minutes as default
+     * but read it from config file
      */
 	int reconnectTimeout = 600000;
 
@@ -127,12 +128,13 @@ public class IrcConnection implements Runnable {
 		return im;
 	}
 
-	IrcConnection (String host, int port, String channel, PluginManager messageHandler, boolean auth) {
+	IrcConnection (String host, int port, String channel, PluginManager messageHandler, boolean auth, int timeout) {
 		this.host = host;
 		this.port = port;
 		this.channel = channel;
 		this.messageHandler = messageHandler;
 		this.auth = auth;
+		this.reconnectTimeout = timeout;
 	}
 
 	private void resetReconnectTimer() {
