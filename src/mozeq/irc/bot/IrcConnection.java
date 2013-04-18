@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class IrcConnection implements Runnable {
 
@@ -20,11 +22,35 @@ public class IrcConnection implements Runnable {
 	String realName = "Finisher Bot";
 	String pass = "kokotice";
 	boolean auth = false;
+	Timer reconnectTimer = null;
+    /* how many milliseconds to wait before trying to reconnect;
+     * freenode waits cca 5 minutes, so we set it to 10minutes
+     */
+	int reconnectTimeout = 600000;
 
 	String host;
 	int port;
 	String channel;
 	PluginManager messageHandler;
+	int reconnected = 0;
+
+	class ReConnectTask extends TimerTask {
+		IrcConnection connection = null;
+
+		public ReConnectTask(IrcConnection conn) {
+			this.connection = conn;
+		}
+
+	    public void run() {
+	        synchronized(synchroObj) {
+	            this.connection.disconnect();
+	        }
+	        reconnected++;
+	        System.err.println("Reconnect: #" + reconnected);
+	        this.connection.connect();
+	    }
+	}
+
 
 	/* PING :irc.the.net
 	 * :irc.the.net 366 mozeqbot #finishers :End of NAMES list
@@ -107,7 +133,17 @@ public class IrcConnection implements Runnable {
 		this.channel = channel;
 		this.messageHandler = messageHandler;
 		this.auth = auth;
+	}
 
+	private void resetReconnectTimer() {
+		if (this.reconnectTimer != null) {// first run
+			this.reconnectTimer.cancel();
+		}
+
+		this.reconnectTimer = new Timer();
+
+		//milliseconds
+		this.reconnectTimer.schedule(new ReConnectTask(this), this.reconnectTimeout);
 	}
 
 	public void connect() {
@@ -115,10 +151,10 @@ public class IrcConnection implements Runnable {
 		String line;
 
 		try {
-			sock = new Socket(host, port);
+			this.sock = new Socket(host, port);
 			//sock.setSoTimeout(5000);
-			ostream = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
-			istream = new BufferedReader (new InputStreamReader(sock.getInputStream()));
+			ostream = new BufferedWriter(new OutputStreamWriter(this.sock.getOutputStream()));
+			istream = new BufferedReader(new InputStreamReader(this.sock.getInputStream()));
 
 			//"USER %s %s bla :%s\r\n" % (IDENT, HOST, REALNAME)
 
@@ -152,25 +188,37 @@ public class IrcConnection implements Runnable {
 			return;
 		}
 
+		//all set, start the timer
+		resetReconnectTimer();
+
 		try {
 			// Keep reading lines from the server.
-	        while ((line = istream.readLine( )) != null) {
-	        	IrcMessage im = parseMessage(line);
+	        while (!sock.isClosed() && (line = istream.readLine()) != null) {
+	            IrcMessage im = parseMessage(line);
 
-	        	//Ignore our messages, otherwise => endless loop :)
-	        	if (im.user != null && im.user.equalsIgnoreCase(nick))
-	        		continue;
-	        	ArrayList<String> responses = messageHandler.runPluginActions(im);
-	        	for (String s: responses)
-	        		sendReply(s, im);
-	        	//System.out.println("Message processed");
+	            //Ignore our messages, otherwise => endless loop :)
+	            if (im.user != null && im.user.equalsIgnoreCase(nick))
+	                continue;
+	            ArrayList<String> responses = messageHandler.runPluginActions(im);
+	            for (String s: responses)
+	                sendReply(s, im);
+	            //System.out.println("Message processed");
+
+	            /* we set the reconnect timer on every activity
+                 * if there is not activity for 10 minutes try to reconnect (at least PING from the server should arrive)
+                 */
+                 resetReconnectTimer();
 
 	            if (im.command != null && im.command.equalsIgnoreCase("PING")) {
-	            	//System.out.println("got ping, sending PONG");
+	                //System.out.println("got ping, sending PONG");
 	                // We must respond to PINGs to avoid being disconnected.
-	                ostream.write("PONG " + line.substring(5) + "\r\n");
-	                //ostream.write("PRIVMSG " + channel + " :I got pinged!\r\n");
-	                ostream.flush();
+	                synchronized(synchroObj) {
+	                    if (!sock.isClosed()) {
+	                        ostream.write("PONG " + line.substring(5) + "\r\n");
+	                        //ostream.write("PRIVMSG " + channel + " :I got pinged!\r\n");
+	                        ostream.flush();
+	                    }
+	                }
 	            }
 
 	        }
@@ -180,6 +228,19 @@ public class IrcConnection implements Runnable {
 			e.printStackTrace();
 		}
 
+	}
+
+	void disconnect() {
+		try {
+			this.istream.close();
+			this.ostream.flush();
+			this.ostream.close();
+			this.sock.close();
+		} catch (IOException e) {
+			System.err.println("Can't close the connection: "+ e);
+		}
+
+		System.err.println("Sucessfully disconnected");
 	}
 
 	public void sendMessage(String message) {
