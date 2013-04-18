@@ -20,8 +20,8 @@ public class KudosPlugin extends IrcBotPlugin {
 	public void init() {
 		this.commands = new ArrayList<String>();
 		commands.add("kudos");
-		commands.add("\\+\\+");
-		commands.add("\\-\\-");
+		commands.add("\\w+\\+\\+");
+		commands.add("\\w+\\-\\-");
 
 		loadKudos();
 	}
@@ -44,12 +44,10 @@ public class KudosPlugin extends IrcBotPlugin {
 			return responses;
 		}
 
-		else if (command.equals("++") || command.equals("--")) {
+		else if (command.endsWith("++") || command.endsWith("--")) {
 
-			String kudoNick = message.body.substring(0, message.body.indexOf(command));
-			int begin = kudoNick.lastIndexOf(' ');
-			if (begin > -1)
-				kudoNick = kudoNick.substring(begin+1);
+			String kudoNick = command.substring(0, command.length() - 2);
+
 
 			if (kudoNick.length() < 1)
 				return responses;
@@ -63,7 +61,7 @@ public class KudosPlugin extends IrcBotPlugin {
 			if (kudos == null)
 				kudos = 0;
 
-			if (command.equals("++"))
+			if (command.endsWith("++"))
 				kudos++;
 			else
 				kudos--;
