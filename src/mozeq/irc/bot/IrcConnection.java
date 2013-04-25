@@ -187,6 +187,7 @@ public class IrcConnection implements Runnable {
 
 		} catch (IOException e) {
 			System.out.println("Can't connect to: '" + host + "' " + e);
+			resetReconnectTimer();
 			return;
 		}
 
@@ -234,10 +235,16 @@ public class IrcConnection implements Runnable {
 
 	void disconnect() {
 		try {
-			this.istream.close();
-			this.ostream.flush();
-			this.ostream.close();
-			this.sock.close();
+		    if (this.istream != null)
+		        this.istream.close();
+
+		    if (this.ostream != null) {
+		        this.ostream.flush();
+		        this.ostream.close();
+		    }
+
+		    if (this.sock != null)
+		        this.sock.close();
 		} catch (IOException e) {
 			System.err.println("Can't close the connection: "+ e);
 		}
