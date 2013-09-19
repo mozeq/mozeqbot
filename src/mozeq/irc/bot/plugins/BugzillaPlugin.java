@@ -34,7 +34,7 @@ public class BugzillaPlugin extends IrcBotPlugin {
 	@Override
 	public ArrayList<String> run(IrcMessage message, String command) {
 		clearResponses();
-		String[] params = message.body.split("#");
+		String[] params = command.split("#");
 		if (params.length < 2) {
 			System.err.println("Can't parse the ticket id from the message");
 			return responses;
